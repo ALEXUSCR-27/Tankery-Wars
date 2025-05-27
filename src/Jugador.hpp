@@ -8,7 +8,7 @@ using namespace std;
 class Jugador {
     private:
     string aNombre;
-    Tanque *aTanque;
+    Tanque *aTank;
     int aTurnos;
     int aEspecial;
     public:
@@ -17,8 +17,8 @@ class Jugador {
         aEspecial = 0;
     }
 
-    void SetTanque(Tanque *tanque) {
-        aTanque = tanque;
+    void SetTank(Tanque *Tanque) {
+        aTank = Tanque;
     }
 
     void SetTurnos(int turnos) {
@@ -28,8 +28,8 @@ class Jugador {
         aNombre = nombre;
     }
 
-    Tanque *GetTanque() {
-        return aTanque;
+    Tanque *GetTank() {
+        return aTank;
     }
     int GetTurnos() {
         return aTurnos;
