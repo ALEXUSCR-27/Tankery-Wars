@@ -2,8 +2,9 @@
 #include <string>
 #include <windows.h>
 #include <math.h>
-#include "Printer.hpp"
-#include "Jugador.hpp"
+
+#include "include/Printer.hpp"
+#include "include/Jugador.hpp"
 #define PI 3.14159265
 using namespace std;
 
@@ -75,7 +76,7 @@ void Menu02() {
             Menu02_2();
             break;
         default:
-            gImpresion->ImpresionError01();
+            gImpresion->Print_Error01();
             Menu02();
     }
     Menu03();
@@ -83,18 +84,17 @@ void Menu02() {
 
 
 void Menu02_2() {
-    gImpresion->ImpresionTerreno();
+    gImpresion->Print_terrain();
     int terreno = VerificarNumero();
     if (terreno>3 || terreno<1) {
-        gImpresion->ImpresionError01();
+        gImpresion->Print_Error01();
         Menu02_2();
     }
 }
 
 
 void Menu03() {
-    system("cls");
-    gImpresion->ImpresionTanks(gJugador1);
+    gImpresion->Print_Tanks(gJugador1);
     Menu03_2();
     //int TankJ1 = VerificarNumero();
 }
@@ -123,7 +123,7 @@ void Menu03_2() {
             gJugador1->SetTank(TankJ1);
             break;
         default:
-            gImpresion->ImpresionError01();
+            gImpresion->Print_Error01();
             Menu03_2();
     }
 
@@ -156,7 +156,7 @@ void Menu03_3() {
             gJugador2->SetTank(TankJ2);
             break;
         default:
-            gImpresion->ImpresionError01();
+            gImpresion->Print_Error01();
             Menu03_3();
     }
     Menu04();
@@ -179,8 +179,8 @@ void Menu04(){
 
 
 void Menu04_2() {
-    gImpresion->ImprimirInformacionTank(gJugador1);
-    gImpresion->ImprimirInformacionTank(gJugador2);
+    gImpresion->Print_Tank_Info(gJugador1);
+    gImpresion->Print_Tank_Info(gJugador2);
     Turnos();
 }
 
@@ -188,11 +188,11 @@ void Menu04_2() {
 void Turnos() {
     switch(gTurno) {
         case 0:
-            gImpresion->ImprimirTurno(gJugador1);
+            gImpresion->Print_Player_Turn(gJugador1);
             Disparo(gJugador1);
             break;
         case 1:
-            gImpresion->ImprimirTurno(gJugador2);
+            gImpresion->Print_Player_Turn(gJugador2);
             Disparo(gJugador2);
         default:
             break;
@@ -202,18 +202,18 @@ void Turnos() {
 
 
 void Disparo(Jugador *J){
-    gImpresion->ImprimirParametros();
+    gImpresion->Print_Parameters();
     int potencia = VerificarNumero();
     if (potencia<0 || potencia>100) {
         cout<<endl;
-        gImpresion->ImpresionError01();
+        gImpresion->Print_Error01();
         Disparo(J);
     }
-    gImpresion->ImprimirParametros02();
+    gImpresion->Print_Parameters02();
     int angulo = VerificarNumero();
     if (angulo<30 || angulo>80) {
         cout<<endl;
-        gImpresion->ImpresionError01();
+        gImpresion->Print_Error01();
         Disparo(J);
     }
 
@@ -222,15 +222,15 @@ void Disparo(Jugador *J){
     if (posicion<=200) {
         Tanque *tEnemigo = gJugador2->GetTank();
         metros+=posicion;
-        gImpresion->ImpresionMetros(metros);
+        gImpresion->Print_Shot_Impact(metros);
         int posicion2 = tEnemigo->GetPosicion();
         int dano = J->GetTank()->GetDano();
         if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
             tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->ImpresionImpacto();
+            gImpresion->Print__Accurate_Shot();
         }
         else {
-            gImpresion->ImpresionNoImpacto();
+            gImpresion->Print_Missed_Shot();
         }
         if (tEnemigo->GetVida()<=0) {
             gImpresion->GameOver(J);
@@ -253,15 +253,15 @@ void Disparo(Jugador *J){
     else {
         metros = posicion - metros;
         Tanque *tEnemigo = gJugador1->GetTank();
-        gImpresion->ImpresionMetros(metros);
+        gImpresion->Print_Shot_Impact(metros);
         int posicion2 = tEnemigo->GetPosicion();
         int dano = J->GetTank()->GetDano();
         if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
             tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->ImpresionImpacto();
+            gImpresion->Print__Accurate_Shot();
         }
         else {
-            gImpresion->ImpresionNoImpacto();
+            gImpresion->Print_Missed_Shot();
         }
         if (tEnemigo->GetVida()<=0) {
             gImpresion->GameOver(J);
@@ -290,7 +290,7 @@ int VerificarNumero() {
 	while (!(cin>>numero)) {
 		cin.clear();
 		cin.ignore(10000,'\n');
-        gImpresion->ImpresionError01();
+        gImpresion->Print_Error01();
 	}
 	return numero;
 }
