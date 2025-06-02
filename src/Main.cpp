@@ -3,8 +3,8 @@
 #include <windows.h>
 #include <math.h>
 
-#include "include/Printer.hpp"
-#include "include/Jugador.hpp"
+#include "../include/Printer.hpp"
+#include "../include/Jugador.hpp"
 #define PI 3.14159265
 using namespace std;
 
