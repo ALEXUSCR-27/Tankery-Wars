@@ -13,29 +13,36 @@ class Printer {
     private:
         HANDLE aHConsole;
 		COORD aSBSize;
-        const int widthCLI = 200;
+
+        const int cli_width = 200;
         char welcome_msg[32] = "Tankery Wars";
-        char difficulty_msg[10] = "Game mode";
-        char MsgTanks[15] = "Tank selection";
-        char MsgError01[29] = "Please enter a valid option!";
+        char msg_tanks[15] = "Tank selection";
+        char msg_error01[29] = "Please enter a valid option!";
+        char msg_player1[11] = "Player 1: ";
+        char msg_player2[11] = "Player 2: ";
+        char pause_msg[29] = "Press any key to continue...";
+        char msg_difficulty02[24] ="Easy: 1         Hard: 2";
+        
+        const string terrain_msg = "Stage selection";
+        const string difficulty_msg = "Game mode";
+        const string tank1 = "[1].[T-28 TANKER 100 LP - 30 DG]";
+        const string tank2 = "[2].[T-14 ARMATA 100 LP - 60 DG]";
+        const string tank3 = "[3].[LEOPARDO II 150 LP - 15 DG]";
+        const string tank4 = "[4].[BLACK NIGHT 100 LP - 25 DG]";
 
-        string terrain_msg = "Stage selection";
-
-        string Tank1 = "[1].[T-28 TANKER 100 LP - 30 DG]";
-        string Tank2 = "[2].[T-14 ARMATA 100 LP - 60 DG]";
-        string Tank3 = "[3].[LEOPARDO II 150 LP - 15 DG]";
-        string Tank4 = "[4].[BLACK NIGHT 100 LP - 25 DG]";
-
-        string Terrain1 = "[1].[POISON SWAMP]";
-        string Terrain2 = "[2].[HILLS OF FIRE]";
-        string Terrain3 = "[3].[ABYSS OF DEATH]";
+        const string terrain1 = "[1].[POISON SWAMP]";
+        const string terrain2 = "[2].[HILLS OF FIRE]";
+        const string terrain3 = "[3].[ABYSS OF DEATH]";
+        char stage_terrain[200];
         
     public:
         Printer() {
             aHConsole=GetStdHandle(STD_OUTPUT_HANDLE);
-            aSBSize=GetLargestConsoleWindowSize(aHConsole);
+            
+            // set full screen mode by resizing the console window
             keybd_event(VK_F11, 0, 0, 0);
             keybd_event(VK_F11, 0, KEYEVENTF_KEYUP, 0);
+            //PrintTerrainPlayers();
         }
 
     void jump_lines(int spaces) { for (int i=0;i<spaces;i++) cout<<"\n"; }
@@ -46,11 +53,10 @@ class Printer {
 
     void Locate_printer_i(char *a) {
         int msg=strlen(a);
-        int pos=(int)(((widthCLI)-msg)/2);
+        int pos=(int)(((cli_width)-msg)/2);
         for(int i=0;i<pos;i++) cout<<" ";
     }
 
-    
     void Print_Welcome() {
         system("cls");
 
@@ -67,7 +73,6 @@ class Printer {
 		}
         
         jump_lines(2);
-        char pause_msg[] = "Press any key to continue...";
         Locate_printer_i(pause_msg);
         system("pause");
         SetConsoleTextAttribute(aHConsole,7);
@@ -100,17 +105,14 @@ class Printer {
     void Get_Player1_Name() {
         system("cls");
         jump_lines(9);
-        
-        char MsgJugador1[] = "Player 1: ";
         Locate_printer();
-        cout<<MsgJugador1;
+        cout<<msg_player1;
     }
     
     void Get_Player2_Name() {
-        cout<<endl;
-        char MsgJugador2[] = "Player 2: ";
+        cout<<endl;    
         Locate_printer();
-        cout<<MsgJugador2;
+        cout<<msg_player2;
     }
     
     void print_player(Jugador *player) {
@@ -134,13 +136,12 @@ class Printer {
         Locate_printer();
         cout<<difficulty_msg<<"\n\n";
 
-        char MsgDificultad2[] ="Easy: 1         Hard: 2";
         Locate_printer();
-        cout<<MsgDificultad2<<"\n\n";
+        cout<<msg_difficulty02<<"\n\n";
 
-        char MsgDificultad3[] = "> ";
+        char MsgDifficulty03[] = "> ";
         Locate_printer();
-        cout<<MsgDificultad3;
+        cout<<MsgDifficulty03;
     }
 
     void Print_Tanks(Jugador *player) {
@@ -149,48 +150,48 @@ class Printer {
         jump_lines(10);
         Locate_printer();
 
-        cout<<MsgTanks<<endl;
-        char InputTank1[] = " > ";
+        cout<<msg_tanks<<endl;
+        char input[] = " > ";
 
-        string nombreJ1 = player->GetNombre();
+        string player_name = player->GetNombre();
         cout<<"\n\n";
 
         Locate_printer();
-        cout<<Tank1<<"\n\n";
+        cout<<tank1<<"\n\n";
         Locate_printer();
-        cout<<Tank2<<"\n\n";
+        cout<<tank2<<"\n\n";
         Locate_printer();
-        cout<<Tank3<<"\n\n";
+        cout<<tank3<<"\n\n";
         Locate_printer();
-        cout<<Tank4<<"\n\n";
+        cout<<tank4<<"\n\n";
         Locate_printer();
 
         jump_lines(2);
         Locate_printer();
-        cout<<nombreJ1<<InputTank1;
+        cout<<player_name<<input;
     }
 
     void Print_terrain() {
         jump_lines(3);
         
-        char MsgTerreno4[] = ">";
+        char input[] = ">";
 
         Locate_printer();
         cout<<terrain_msg<<"\n\n";
         Locate_printer();
-        cout<<Terrain1<<"\n\n";
+        cout<<terrain1<<"\n\n";
         Locate_printer();
-        cout<<Terrain2<<"\n\n";
+        cout<<terrain2<<"\n\n";
         Locate_printer();
-        cout<<Terrain3<<"\n\n";
+        cout<<terrain3<<"\n\n";
         Locate_printer();
-        cout<<MsgTerreno4;
+        cout<<input;
 
     }
 
     void Print_Error01() {
         Locate_printer();
-        cout<<MsgError01;
+        cout<<msg_error01;
         Locate_printer();
         cout<<"> "<<endl;
     }
@@ -198,21 +199,21 @@ class Printer {
     void Print_Tank_Info(Jugador *player){
         cout<<"\n\n";
 
-        string nombre = player->GetNombre();
+        string player_name = player->GetNombre();
         string player_tank = player->GetTank()->GetNombre();
 
         char MsgNTank[] = "Tank details: ";
         char MsgVida[] = "LP: ";
-        char MsgDaño[] = "Damage: ";
-        char MsgPosicion[] = "Coordinates: ";
+        char MsgDamage[] = "Damage: ";
+        char MsgCoordinates[] = "Coordinates: ";
 
         Locate_printer();
-        cout<<nombre<<endl;
+        cout<<player_name<<endl;
 
         Locate_printer();
         cout<<MsgNTank<<player_tank<<" - "<<MsgVida<<player->GetTank()->GetVida()<<" - ";
-        cout<<MsgDaño<<player->GetTank()->GetDano()<<"pt"<<" - ";
-        cout<<MsgPosicion<<player->GetTank()->GetPosicion()<<"m"<<endl;
+        cout<<MsgDamage<<player->GetTank()->GetDano()<<"pt"<<" - ";
+        cout<<MsgCoordinates<<player->GetTank()->GetPosicion()<<"m"<<endl;
     }
 
     void Print_Player_Turn(Jugador *player) {
@@ -222,30 +223,37 @@ class Printer {
     }
 
     void Print_Parameters() {
-        char MsgPotencia [] ="Shot Power(0-100): ";
+        char MsgPower [] ="Shot Power(0-100): ";
         Locate_printer();
-        cout<<MsgPotencia; 
+        cout<<MsgPower; 
     }
 
 
     void Print_Parameters02() {
         cout<<endl;
-        char MsgAngulo[] ="Angle(30-80): ";
+        char MsgAngle[] ="Angle(30-80): ";
         Locate_printer();
-        cout<<MsgAngulo; 
+        cout<<MsgAngle; 
     }
 
+    // void PrintTerrainPlayers() {
+    //     for (int i=0;i<209;i++) {
+    //         cout<<" ";
+    //     }
+    //     system("pause");
+    // }
 
-    void Print_Shot_Impact(int metros) {
+
+    void Print_Shot_Impact(int &coordinates) {
         cout<<endl;
-        char MsgMetros[] = "[THE SHOT HIT AT] = ";
+        char MsgMeters[] = "The shot landed at: ";
         Locate_printer();
-        cout<<MsgMetros<<metros<<endl;
+        cout<<MsgMeters<<coordinates<<endl;
     }
 
     void Print_Missed_Shot() {
         cout<<endl;
-        char Msg[] = "[NO HUBO IMPACTO]";
+        char Msg[] = "Missed shot!";
         Locate_printer();
         cout<<Msg<<endl;
     }
@@ -253,19 +261,53 @@ class Printer {
 
     void Print__Accurate_Shot() {
         cout<<endl;
-        char Msg[] = "[HUBO UN IMPACTO]";
+        char Msg[] = "Direct hit!";
         Locate_printer();
         cout<<Msg<<endl;
+    }
+
+    void setTerrain(int player1_position, int player2_position) {
+        int terrain = 1000*0.20;
+        int player1_resized_position = player1_position*0.20;
+        int player2_resized_position = player2_position*0.20;
+        for (int i=0;i<terrain;i++) {
+            if (i == player1_resized_position) {
+                stage_terrain[i] = '1';
+            } else if (i == player2_resized_position) {
+                stage_terrain[i] = '2';
+            } else {
+                stage_terrain[i] = '_';
+            }
+        }
+        cout<<endl;
+    }
+
+    void printStageTerrain() {
+        SetConsoleTextAttribute(aHConsole, 2);
+        jump_lines(2);
+        cout<<"     ";
+        for (int i=0;i<200;i++) {
+            cout<<stage_terrain[i];
+        }
+        cout<<endl;
+        SetConsoleTextAttribute(aHConsole, 7);
+    }
+
+    void setShotTerrain(int position_shot) {
+        int resized_position = position_shot*0.20;
+        if (stage_terrain[resized_position]!='1' and stage_terrain[resized_position]!='2') {
+            stage_terrain[resized_position] = 'X';
+        }
     }
     
     void GameOver(Jugador *J) {
         cout<<endl;
-        char MsgGameOver[] = "[FIN DEL JUEGO]";
-        char MsgGanador[] = "[GANADOR] = ";
+        char MsgGameOver[] = "[GAME OVER]";
+        char MsgWinner[] = "[WINNER] -> ";
         Locate_printer();
         cout<<MsgGameOver<<endl;
         Locate_printer();
-        cout<<MsgGanador<<J->GetNombre()<<endl;
+        cout<<MsgWinner<<J->GetNombre()<<endl;
         Locate_printer();
     }
 };

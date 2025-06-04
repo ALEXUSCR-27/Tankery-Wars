@@ -165,15 +165,16 @@ void Menu03_3() {
 
 void Menu04(){
     system("cls");
+    srand (time(NULL));
     int posicionTank1=0;
     int posicionTank2=0;
     for (int i=0;i<2;i++) {
-        posicionTank1 = rand() % 100 + 1;
-        posicionTank2 = rand() % 801+200;
+        posicionTank1 = rand() % 300 + 1;
+        posicionTank2 = rand() % 1000 + 401;
     }
     gJugador1->GetTank()->SetPosicion(posicionTank1);
     gJugador2->GetTank()->SetPosicion(posicionTank2);
-    cout<<"Game Started!"<<endl<<endl;
+    gImpresion->setTerrain(posicionTank1, posicionTank2);
     Menu04_2();
 }
 
@@ -181,11 +182,13 @@ void Menu04(){
 void Menu04_2() {
     gImpresion->Print_Tank_Info(gJugador1);
     gImpresion->Print_Tank_Info(gJugador2);
+    gImpresion->printStageTerrain();
     Turnos();
 }
 
 
 void Turnos() {
+
     switch(gTurno) {
         case 0:
             gImpresion->Print_Player_Turn(gJugador1);
@@ -219,6 +222,7 @@ void Disparo(Jugador *J){
 
     int metros = (pow(potencia,2)*sin(2*angulo*PI/180))/9.8;
     int posicion = J->GetTank()->GetPosicion();
+    gImpresion->setShotTerrain(metros);
     if (posicion<=200) {
         Tanque *tEnemigo = gJugador2->GetTank();
         metros+=posicion;
