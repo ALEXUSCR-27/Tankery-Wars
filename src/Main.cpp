@@ -5,10 +5,10 @@
 
 #include "../include/Printer.hpp"
 #include "../include/Jugador.hpp"
+
 #define PI 3.14159265
+
 using namespace std;
-
-
 
 Printer *gImpresion = new Printer();
 Jugador *gJugador1 = NULL;
@@ -27,6 +27,8 @@ void Menu03_3();
 void Menu04();
 void Menu04_2();
 void Turnos();
+void ShotAux(int potencia, int angulo, Jugador *J);
+void ShotPlayer(Tanque *tEnemigo, int metros, Jugador *J);
 int END();
 void Disparo(Jugador *J1);
 int VerificarNumero();
@@ -170,7 +172,7 @@ void Menu04(){
     int posicionTank2=0;
     for (int i=0;i<2;i++) {
         posicionTank1 = rand() % 300 + 1;
-        posicionTank2 = rand() % 1000 + 401;
+        posicionTank2 = rand() % 900 + 401;
     }
     gJugador1->GetTank()->SetPosicion(posicionTank1);
     gJugador2->GetTank()->SetPosicion(posicionTank2);
@@ -212,6 +214,7 @@ void Disparo(Jugador *J){
         gImpresion->Print_Error01();
         Disparo(J);
     }
+
     gImpresion->Print_Parameters02();
     int angulo = VerificarNumero();
     if (angulo<30 || angulo>80) {
@@ -220,70 +223,56 @@ void Disparo(Jugador *J){
         Disparo(J);
     }
 
+    ShotAux(potencia, angulo, J);
+}
+
+void ShotAux(int potencia, int angulo, Jugador *J) {
     int metros = (pow(potencia,2)*sin(2*angulo*PI/180))/9.8;
+
     int posicion = J->GetTank()->GetPosicion();
-    gImpresion->setShotTerrain(metros);
-    if (posicion<=200) {
-        Tanque *tEnemigo = gJugador2->GetTank();
+    
+    Tanque *tEnemigo = nullptr;
+    if (posicion<=300) {
+        tEnemigo = gJugador2->GetTank();
         metros+=posicion;
-        gImpresion->Print_Shot_Impact(metros);
-        int posicion2 = tEnemigo->GetPosicion();
-        int dano = J->GetTank()->GetDano();
-        if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
-            tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->Print__Accurate_Shot();
-        }
-        else {
-            gImpresion->Print_Missed_Shot();
-        }
-        if (tEnemigo->GetVida()<=0) {
-            gImpresion->GameOver(J);
-            END();
-        }
-        if (metros>=(posicion2-30) & metros<=(posicion2+30) & J->GetEspecial() == 1) {
-            if (J->GetTank()->GetEspecial() == 1) {
-                J->GetTank()->SetEspecial(0);
-            }
-            else {
-                J->GetTank()->SetEspecial(1);
-            }
-            Menu04_2();
-        }
-        else {
-            gTurno = 1;
-            Menu04_2();
-        }
+        gTurno = 1;
     }
     else {
+        tEnemigo = gJugador1->GetTank();
         metros = posicion - metros;
-        Tanque *tEnemigo = gJugador1->GetTank();
-        gImpresion->Print_Shot_Impact(metros);
-        int posicion2 = tEnemigo->GetPosicion();
-        int dano = J->GetTank()->GetDano();
-        if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
-            tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->Print__Accurate_Shot();
+        gTurno = 0;
+    }
+    
+    if (metros<0) {metros = 0;}
+    if (metros>1000) {metros = 1000;}
+
+    ShotPlayer(tEnemigo, metros, J);
+}
+
+void ShotPlayer(Tanque *tEnemigo, int metros, Jugador *J) {
+    gImpresion->setShotTerrain(metros);
+    gImpresion->Print_Shot_Impact(metros);
+    int posicion2 = tEnemigo->GetPosicion();
+    int dano = J->GetTank()->GetDano();
+    if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
+        tEnemigo->SetVida(tEnemigo->GetVida()-dano);
+        gImpresion->Print__Accurate_Shot();
+    }
+    else {
+        gImpresion->Print_Missed_Shot();
+    }
+    if (tEnemigo->GetVida()<=0) {
+        gImpresion->GameOver(J);
+        END();
+    }
+    if (metros>=(posicion2-30) & metros<=(posicion2+30) & J->GetEspecial() == 1) {
+        if (J->GetTank()->GetEspecial() == 1) {
+            J->GetTank()->SetEspecial(0);
         }
         else {
-            gImpresion->Print_Missed_Shot();
+            J->GetTank()->SetEspecial(1);
         }
-        if (tEnemigo->GetVida()<=0) {
-            gImpresion->GameOver(J);
-            END();
-        }
-        if (metros>=(posicion2-30) & metros<=(posicion2+30) & J->GetTank()->GetEspecial() == 1) {
-            if (J->GetTank()->GetEspecial() == 1) {
-                J->GetTank()->SetEspecial(0);
-            }
-            else {
-                J->GetTank()->SetEspecial(1);
-            }
-            Menu04_2();
-        }
-        else {
-            gTurno = 0;
-            Menu04_2();
-        }
+        Menu04_2();
     }
 }
 

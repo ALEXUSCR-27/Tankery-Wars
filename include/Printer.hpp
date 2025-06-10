@@ -11,8 +11,7 @@ using namespace std;
 
 class Printer {
     private:
-        HANDLE aHConsole;
-		COORD aSBSize;
+        HANDLE aHConsole; //CLI handler
 
         const int cli_width = 200;
         char welcome_msg[32] = "Tankery Wars";
@@ -42,11 +41,12 @@ class Printer {
             // set full screen mode by resizing the console window
             keybd_event(VK_F11, 0, 0, 0);
             keybd_event(VK_F11, 0, KEYEVENTF_KEYUP, 0);
-            //PrintTerrainPlayers();
         }
-
+    
+    // function just to jump lines
     void jump_lines(int spaces) { for (int i=0;i<spaces;i++) cout<<"\n"; }
 
+    // function to locate the printer in the left side of the CLI
     void Locate_printer() {
         for(int i=0;i<30;i++) cout<<" ";
     }
@@ -76,31 +76,8 @@ class Printer {
         Locate_printer_i(pause_msg);
         system("pause");
         SetConsoleTextAttribute(aHConsole,7);
-        //Print_Tank();
     }
     
-    
-    
-    // void Print_Tank() {
-    //     char parte1[] = "________";
-    //     char parte2[] = "   __/        \\_____________";
-    //     char parte3[] = "           |___         _____________|=====|>";
-    //     char parte4[] = "______|       |_____________";
-    //     char parte5[] = "|___________________________|";
-    //     char parte6[] = "\\_/\\_/\\_/\\_/\\_/\\_/\\_/";
-    //     char* parts[] = {parte1, parte2, parte3, parte4, parte5, parte6}; 
-    //     Print_Tank_aux(parts);
-    // }
-    
-    // void Print_Tank_aux(char* a[]) {
-    //     for (int i=0;i<6;i++) {
-    //         Locate_printer_i(a[i]);
-    //         cout<<a[i]<<endl;
-    //     }
-    //     cout<<endl;
-    //     Locate_printer_i(a[0]);
-    //     system("pause");
-    // }
     
     void Get_Player1_Name() {
         system("cls");
@@ -202,7 +179,7 @@ class Printer {
         string player_name = player->GetNombre();
         string player_tank = player->GetTank()->GetNombre();
 
-        char MsgNTank[] = "Tank details: ";
+        //char MsgNTank[] = "Tank details: ";
         char MsgVida[] = "LP: ";
         char MsgDamage[] = "Damage: ";
         char MsgCoordinates[] = "Coordinates: ";
@@ -211,8 +188,8 @@ class Printer {
         cout<<player_name<<endl;
 
         Locate_printer();
-        cout<<MsgNTank<<player_tank<<" - "<<MsgVida<<player->GetTank()->GetVida()<<" - ";
-        cout<<MsgDamage<<player->GetTank()->GetDano()<<"pt"<<" - ";
+        cout<<player_tank<<endl<<MsgVida<<player->GetTank()->GetVida()<<"pt"<<endl;
+        cout<<MsgDamage<<player->GetTank()->GetDano()<<"pt"<<endl;
         cout<<MsgCoordinates<<player->GetTank()->GetPosicion()<<"m"<<endl;
     }
 
@@ -236,19 +213,13 @@ class Printer {
         cout<<MsgAngle; 
     }
 
-    // void PrintTerrainPlayers() {
-    //     for (int i=0;i<209;i++) {
-    //         cout<<" ";
-    //     }
-    //     system("pause");
-    // }
-
-
-    void Print_Shot_Impact(int &coordinates) {
+    void Print_Shot_Impact(int coordinates) {
+        SetConsoleTextAttribute(aHConsole, 4);
         cout<<endl;
         char MsgMeters[] = "The shot landed at: ";
         Locate_printer();
         cout<<MsgMeters<<coordinates<<endl;
+        SetConsoleTextAttribute(aHConsole, 7);
     }
 
     void Print_Missed_Shot() {
@@ -257,7 +228,6 @@ class Printer {
         Locate_printer();
         cout<<Msg<<endl;
     }
-
 
     void Print__Accurate_Shot() {
         cout<<endl;
