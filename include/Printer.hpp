@@ -14,7 +14,7 @@ class Printer {
         HANDLE aHConsole; //CLI handler
 
         const int cli_width = 200;
-        char welcome_msg[32] = "Tankery Wars";
+        char welcome_msg[13] = "Tankery Wars";
         char msg_tanks[15] = "Tank selection";
         char msg_error01[29] = "Please enter a valid option!";
         char msg_player1[11] = "Player 1: ";
@@ -44,6 +44,17 @@ class Printer {
             keybd_event(VK_F11, 0, KEYEVENTF_KEYUP, 0);
         }
     
+    void printTank() {
+        locatePrinter02(welcome_msg);
+        cout << "    ____"         <<endl;
+        locatePrinter02(welcome_msg);
+        cout << " __/[][] \\__"    <<endl;
+        locatePrinter02(welcome_msg);
+        cout << "|_ TANK  __|>"   <<endl;
+        locatePrinter02(welcome_msg);
+        cout << "  O      O"      <<endl<<endl;
+    }
+
     // function just to jump lines
     void jumpLines(int spaces) { for (int i=0;i<spaces;i++) cout<<"\n"; }
 
@@ -60,8 +71,9 @@ class Printer {
 
     void printWelcome() {
         system("cls");
+        cout<<"Cntrol + C to exit";
 
-		jumpLines(5);
+		jumpLines(15);
 		locatePrinter02(welcome_msg);
 		SetConsoleTextAttribute(aHConsole,2);
 
@@ -72,6 +84,7 @@ class Printer {
 		}
         
         jumpLines(2);
+        printTank();
         locatePrinter02(pause_msg);
         system("pause");
         SetConsoleTextAttribute(aHConsole,7);
@@ -80,6 +93,8 @@ class Printer {
     
     void printGetPlayer1NameMenu() {
         system("cls");
+        cout<<"Cntrol + C to exit";
+
         jumpLines(9);
         locatePrinter();
         cout<<msg_player1;
@@ -98,8 +113,8 @@ class Printer {
 
     void printGetGameModeMenu(string &n1, string &n2) {
         system("cls");
+        cout<<"Cntrol + C to exit";
 
-        locatePrinter();
         jumpLines(10);
         locatePrinter();
 
@@ -115,13 +130,13 @@ class Printer {
         locatePrinter();
         cout<<msg_difficulty02<<"\n\n";
 
-        //char MsgDifficulty03[] = "> ";
         locatePrinter();
         cout<<input;
     }
 
     void printGetTankSelectionMenu(Player *player) {
         system("cls");
+        cout<<"Cntrol + C to exit";
 
         jumpLines(10);
         locatePrinter();
@@ -161,9 +176,13 @@ class Printer {
 
     void printError01() {
         locatePrinter();
-        cout<<msg_error01;
+        cout<<msg_error01<<endl;
         locatePrinter();
-        cout<<input<<endl;
+        cout<<input;
+    }
+
+    void printExitMsg() {
+        cout<<"Cntrol + C to exit ;)"<<endl<<endl;
     }
 
     void printPlayerTankInfo(Player *player){
@@ -175,7 +194,6 @@ class Printer {
         char MsgVida[] = "LP: ";
         char MsgDamage[] = "Damage: ";
         char MsgCoordinates[] = "Coordinates: ";
-
 
         cout<<player_name<<endl;
         cout<<player_tank<<endl<<MsgVida<<player->getTank()->getLife()<<"pt"<<endl;
@@ -204,26 +222,30 @@ class Printer {
     }
 
     void printShotImpact(int coordinates) {
-        SetConsoleTextAttribute(aHConsole, 4);
+        SetConsoleTextAttribute(aHConsole, 1);
         cout<<endl;
         char MsgMeters[] = "The shot landed at: ";
         locatePrinter();
-        cout<<MsgMeters<<coordinates<<endl;
+        cout<<MsgMeters<<coordinates<<"m"<<endl;
         SetConsoleTextAttribute(aHConsole, 7);
     }
 
     void printMissedShotMsg() {
+        SetConsoleTextAttribute(aHConsole, 4);
         cout<<endl;
         char Msg[] = "Missed shot!";
         locatePrinter();
         cout<<Msg<<endl;
+        SetConsoleTextAttribute(aHConsole, 7);
     }
 
     void printAccurateShotMsg() {
+        SetConsoleTextAttribute(aHConsole, 2);
         cout<<endl;
         char Msg[] = "Direct hit!";
         locatePrinter();
         cout<<Msg<<endl;
+        SetConsoleTextAttribute(aHConsole, 7);
     }
 
     void SetTerrainString(int player1_position, int player2_position) {
@@ -262,13 +284,13 @@ class Printer {
     
     void gameOver(Player *J) {
         cout<<endl;
-        char MsgGameOver[] = "[GAME OVER]";
-        char MsgWinner[] = "[WINNER] -> ";
+        char MsgGameOver[] = "Game Over!";
+        char MsgWinner[] = "Winner: ";
         locatePrinter();
-        cout<<MsgGameOver<<endl;
+        cout<<MsgWinner<<J->getName()<<endl<<endl;
         locatePrinter();
-        cout<<MsgWinner<<J->getName()<<endl;
-        locatePrinter();
+        cout<<MsgGameOver<<endl<<endl;
+        locatePrinter02(pause_msg);
     }
 };
 

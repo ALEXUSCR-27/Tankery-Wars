@@ -168,7 +168,7 @@ void setPlayersPosition(){
     int tank2_location=0;
     for (int i=0;i<2;i++) {
         tank1_location = rand() % 300 + 1;
-        tank2_location = rand() % 900 + 401;
+        tank2_location = rand() % 700 + 301;
     }
     pPlayer1->getTank()->setPosition(tank1_location);
     pPlayer2->getTank()->setPosition(tank2_location);
@@ -177,6 +177,7 @@ void setPlayersPosition(){
 }
 
 void play() {
+    pPrinter->printExitMsg();
     pPrinter->printPlayerTankInfo(pPlayer1);
     pPrinter->printPlayerTankInfo(pPlayer2);
     pPrinter->printStageTerrain();
@@ -280,7 +281,6 @@ int verifyInput() {
 }
 
 int endGame() {
-    cout<<"\n\n\n";
     system("pause");
     cout<<"\n\n\n";
     exit(-1);
