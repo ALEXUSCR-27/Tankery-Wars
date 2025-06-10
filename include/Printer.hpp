@@ -5,7 +5,7 @@
 #include <string>
 #include <Windows.h>
 
-#include "Jugador.hpp"
+#include "Player.hpp"
 
 using namespace std;
 
@@ -21,6 +21,7 @@ class Printer {
         char msg_player2[11] = "Player 2: ";
         char pause_msg[29] = "Press any key to continue...";
         char msg_difficulty02[24] ="Easy: 1         Hard: 2";
+        char input [3]= "> ";
         
         const string terrain_msg = "Stage selection";
         const string difficulty_msg = "Game mode";
@@ -44,26 +45,24 @@ class Printer {
         }
     
     // function just to jump lines
-    void jump_lines(int spaces) { for (int i=0;i<spaces;i++) cout<<"\n"; }
+    void jumpLines(int spaces) { for (int i=0;i<spaces;i++) cout<<"\n"; }
 
     // function to locate the printer in the left side of the CLI
-    void Locate_printer() {
+    void locatePrinter() {
         for(int i=0;i<30;i++) cout<<" ";
     }
 
-    void Locate_printer_i(char *a) {
+    void locatePrinter02(char *a) {
         int msg=strlen(a);
         int pos=(int)(((cli_width)-msg)/2);
         for(int i=0;i<pos;i++) cout<<" ";
     }
 
-    void Print_Welcome() {
+    void printWelcome() {
         system("cls");
 
-		jump_lines(5);
-        
-		Locate_printer_i(welcome_msg);
-        
+		jumpLines(5);
+		locatePrinter02(welcome_msg);
 		SetConsoleTextAttribute(aHConsole,2);
 
         int msg=strlen(welcome_msg);
@@ -72,171 +71,162 @@ class Printer {
 			Sleep(50);
 		}
         
-        jump_lines(2);
-        Locate_printer_i(pause_msg);
+        jumpLines(2);
+        locatePrinter02(pause_msg);
         system("pause");
         SetConsoleTextAttribute(aHConsole,7);
     }
     
     
-    void Get_Player1_Name() {
+    void printGetPlayer1NameMenu() {
         system("cls");
-        jump_lines(9);
-        Locate_printer();
+        jumpLines(9);
+        locatePrinter();
         cout<<msg_player1;
     }
     
-    void Get_Player2_Name() {
+    void printGetPlayer2NameMenu() {
         cout<<endl;    
-        Locate_printer();
+        locatePrinter();
         cout<<msg_player2;
     }
     
-    void print_player(Jugador *player) {
-        Locate_printer();
-        cout<<player->GetNombre()<<" > ";
+    void printPlayerName(Player *player) {
+        locatePrinter();
+        cout<<player->getName()<<" > ";
     }
 
-    void Game_Mode(string &n1, string &n2) {
+    void printGetGameModeMenu(string &n1, string &n2) {
         system("cls");
 
-        Locate_printer();
-        jump_lines(10);
-        Locate_printer();
+        locatePrinter();
+        jumpLines(10);
+        locatePrinter();
 
         cout<<"GET READY!\n\n";
-        Locate_printer();
+        locatePrinter();
 
         cout<<n1<<" VS "<<n2<<endl<<endl;
 
-        jump_lines(9);
-        Locate_printer();
+        jumpLines(9);
+        locatePrinter();
         cout<<difficulty_msg<<"\n\n";
 
-        Locate_printer();
+        locatePrinter();
         cout<<msg_difficulty02<<"\n\n";
 
-        char MsgDifficulty03[] = "> ";
-        Locate_printer();
-        cout<<MsgDifficulty03;
+        //char MsgDifficulty03[] = "> ";
+        locatePrinter();
+        cout<<input;
     }
 
-    void Print_Tanks(Jugador *player) {
+    void printGetTankSelectionMenu(Player *player) {
         system("cls");
 
-        jump_lines(10);
-        Locate_printer();
-
+        jumpLines(10);
+        locatePrinter();
         cout<<msg_tanks<<endl;
-        char input[] = " > ";
 
-        string player_name = player->GetNombre();
+        string player_name = player->getName();
         cout<<"\n\n";
 
-        Locate_printer();
+        locatePrinter();
         cout<<tank1<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<tank2<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<tank3<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<tank4<<"\n\n";
-        Locate_printer();
+        locatePrinter();
 
-        jump_lines(2);
-        Locate_printer();
+        jumpLines(2);
+        locatePrinter();
         cout<<player_name<<input;
     }
 
-    void Print_terrain() {
-        jump_lines(3);
-        
-        char input[] = ">";
-
-        Locate_printer();
+    void printGetTerrainSelectionMenu() {
+        jumpLines(3);
+        locatePrinter();
         cout<<terrain_msg<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<terrain1<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<terrain2<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<terrain3<<"\n\n";
-        Locate_printer();
+        locatePrinter();
         cout<<input;
-
     }
 
-    void Print_Error01() {
-        Locate_printer();
+    void printError01() {
+        locatePrinter();
         cout<<msg_error01;
-        Locate_printer();
-        cout<<"> "<<endl;
+        locatePrinter();
+        cout<<input<<endl;
     }
 
-    void Print_Tank_Info(Jugador *player){
+    void printPlayerTankInfo(Player *player){
         cout<<"\n\n";
 
-        string player_name = player->GetNombre();
-        string player_tank = player->GetTank()->GetNombre();
+        string player_name = player->getName();
+        string player_tank = player->getTank()->getName();
 
-        //char MsgNTank[] = "Tank details: ";
         char MsgVida[] = "LP: ";
         char MsgDamage[] = "Damage: ";
         char MsgCoordinates[] = "Coordinates: ";
 
-        Locate_printer();
+
         cout<<player_name<<endl;
-
-        Locate_printer();
-        cout<<player_tank<<endl<<MsgVida<<player->GetTank()->GetVida()<<"pt"<<endl;
-        cout<<MsgDamage<<player->GetTank()->GetDano()<<"pt"<<endl;
-        cout<<MsgCoordinates<<player->GetTank()->GetPosicion()<<"m"<<endl;
+        cout<<player_tank<<endl<<MsgVida<<player->getTank()->getLife()<<"pt"<<endl;
+        cout<<MsgDamage<<player->getTank()->getDamage()<<"pt"<<endl;
+        cout<<MsgCoordinates<<player->getTank()->getPosition()<<"m"<<endl;
     }
 
-    void Print_Player_Turn(Jugador *player) {
+    void printPlayerTurn(Player *player) {
         cout<<"\n\n";
-        Locate_printer();
-        cout<<player->GetNombre()<<"'s turn"<<endl;
+        locatePrinter();
+        cout<<player->getName()<<"'s turn"<<endl;
     }
 
-    void Print_Parameters() {
+    void printShotParameters() {
         char MsgPower [] ="Shot Power(0-100): ";
-        Locate_printer();
+        locatePrinter();
         cout<<MsgPower; 
     }
 
 
-    void Print_Parameters02() {
+    void printAngleParameters() {
         cout<<endl;
         char MsgAngle[] ="Angle(30-80): ";
-        Locate_printer();
+        locatePrinter();
         cout<<MsgAngle; 
     }
 
-    void Print_Shot_Impact(int coordinates) {
+    void printShotImpact(int coordinates) {
         SetConsoleTextAttribute(aHConsole, 4);
         cout<<endl;
         char MsgMeters[] = "The shot landed at: ";
-        Locate_printer();
+        locatePrinter();
         cout<<MsgMeters<<coordinates<<endl;
         SetConsoleTextAttribute(aHConsole, 7);
     }
 
-    void Print_Missed_Shot() {
+    void printMissedShotMsg() {
         cout<<endl;
         char Msg[] = "Missed shot!";
-        Locate_printer();
+        locatePrinter();
         cout<<Msg<<endl;
     }
 
-    void Print__Accurate_Shot() {
+    void printAccurateShotMsg() {
         cout<<endl;
         char Msg[] = "Direct hit!";
-        Locate_printer();
+        locatePrinter();
         cout<<Msg<<endl;
     }
 
-    void setTerrain(int player1_position, int player2_position) {
+    void SetTerrainString(int player1_position, int player2_position) {
         int terrain = 1000*0.20;
         int player1_resized_position = player1_position*0.20;
         int player2_resized_position = player2_position*0.20;
@@ -254,7 +244,7 @@ class Printer {
 
     void printStageTerrain() {
         SetConsoleTextAttribute(aHConsole, 2);
-        jump_lines(2);
+        jumpLines(2);
         cout<<"     ";
         for (int i=0;i<200;i++) {
             cout<<stage_terrain[i];
@@ -270,15 +260,15 @@ class Printer {
         }
     }
     
-    void GameOver(Jugador *J) {
+    void gameOver(Player *J) {
         cout<<endl;
         char MsgGameOver[] = "[GAME OVER]";
         char MsgWinner[] = "[WINNER] -> ";
-        Locate_printer();
+        locatePrinter();
         cout<<MsgGameOver<<endl;
-        Locate_printer();
-        cout<<MsgWinner<<J->GetNombre()<<endl;
-        Locate_printer();
+        locatePrinter();
+        cout<<MsgWinner<<J->getName()<<endl;
+        locatePrinter();
     }
 };
 
