@@ -2,300 +2,284 @@
 #include <string>
 #include <windows.h>
 #include <math.h>
-#include "Printer.hpp"
-#include "Jugador.hpp"
+
+#include "../include/Printer.hpp"
+#include "../include/Player.hpp"
+
 #define PI 3.14159265
+
 using namespace std;
 
+Printer* pPrinter = new Printer();
+Player* pPlayer1 = nullptr;
+Player* pPlayer2 = nullptr;
+
+int pDifficulty = 0;
+int pPlayerTurn = 0;
 
 
-Printer *gImpresion = new Printer();
-Jugador *gJugador1 = NULL;
-Jugador *gJugador2 = NULL;
-int gDificultad = 0;
-int gTurno = 0;
-
-
-void Inicio();
-void Menu();
-void Menu02();
-void Menu02_2();
-void Menu03();
-void Menu03_2();
-void Menu03_3();
-void Menu04();
-void Menu04_2();
-void Turnos();
-int END();
-void Disparo(Jugador *J1);
-int VerificarNumero();
+void init();
+void getPlayersNameMenu();
+void getGameDifficulty();
+void getGameTerrain();
+void printTanksSelection();
+void getPlayerTank();
+void getPlayerTank02();
+void setPlayersPosition();
+void play();
+void playerTurns();
+void shotAux(int shot_power, int angle, Player *J);
+void shotPlayer(Tank *enemy_tank, int shot_impact_position, Player *J);
+void shot(Player *J1);
+int verifyInput();
+int endGame();
 
 
 int main() {
     system("cls");
-    Inicio();
+    init();
+
     return 0;
 }
 
-
-void Inicio() {
+void init() {
     system("cls");
-    gImpresion->Print_Welcome();
-    Menu();
+    pPrinter->printWelcome();
+    getPlayersNameMenu();
 }
 
-void Menu() {
-    gJugador1 = new Jugador();
-    gJugador2 = new Jugador();
+void getPlayersNameMenu() {
+    pPlayer1 = new Player();
+    pPlayer2 = new Player();
 
-    gImpresion->Get_Player1_Name();
-    string nombre1;
-    cin>>nombre1;
+    pPrinter->printGetPlayer1NameMenu();
+    string player1_name;
+    cin>>player1_name;
 
-    gJugador1->SetNombre(nombre1);
-    gImpresion->Get_Player2_Name();
-    string nombre2;
-    cin>>nombre2;
+    pPlayer1->setName(player1_name);
+    pPrinter->printGetPlayer2NameMenu();
+    string player2_name;
+    cin>>player2_name;
 
-    gJugador2->SetNombre(nombre2);
-    gImpresion->Game_Mode(nombre1, nombre2);
+    pPlayer2->setName(player2_name);
+    pPrinter->printGetGameModeMenu(player1_name, player2_name);
 
-    Menu02();
+    getGameDifficulty();
 }
 
-
-void Menu02() {
-    gDificultad = VerificarNumero();
-    switch(gDificultad) {
+void getGameDifficulty() {
+    pDifficulty = verifyInput();
+    switch(pDifficulty) {
         case 1:
-            gDificultad = 1;
+            pDifficulty = 1;
             break;
         case 2:
-            gDificultad = 2;
-            Menu02_2();
+            pDifficulty = 2;
+            getGameTerrain();
             break;
         default:
-            gImpresion->ImpresionError01();
-            Menu02();
+            pPrinter->printError01();
+            getGameDifficulty();
     }
-    Menu03();
+    printTanksSelection();
 }
 
-
-void Menu02_2() {
-    gImpresion->ImpresionTerreno();
-    int terreno = VerificarNumero();
-    if (terreno>3 || terreno<1) {
-        gImpresion->ImpresionError01();
-        Menu02_2();
+void getGameTerrain() {
+    pPrinter->printGetTerrainSelectionMenu();
+    int terrain = verifyInput();
+    if (terrain>3 || terrain<1) {
+        pPrinter->printError01();
+        getGameTerrain();
     }
 }
 
-
-void Menu03() {
-    system("cls");
-    gImpresion->ImpresionTanks(gJugador1);
-    Menu03_2();
-    //int TankJ1 = VerificarNumero();
+void printTanksSelection() {
+    pPrinter->printGetTankSelectionMenu(pPlayer1);
+    getPlayerTank();
 }
 
-
-void Menu03_2() {
-    int TJ1 = VerificarNumero();
-    Tanque *TankJ1 = nullptr;
-    switch (TJ1) {
+void getPlayerTank() {
+    int player1_tank = verifyInput();
+    Tank* pPlayer1_tank = nullptr;
+    switch (player1_tank) {
         case 1:
-            TankJ1 = new Tanque("T-28 TANKER",100,30);
-            gJugador1->SetTank(TankJ1);
+            pPlayer1_tank = new Tank("T-28 TANKER",100,30);
+            pPlayer1->setTank(pPlayer1_tank);
             break;
         case 2:
-            TankJ1 = new Tanque("T-14 Armata",100,60);
-            gJugador1->SetTank(TankJ1);
+            pPlayer1_tank = new Tank("T-14 Armata",100,60);
+            pPlayer1->setTank(pPlayer1_tank);
             break;
         case 3:
-            TankJ1 = new Tanque("Leopardo II",150,15);
-            gJugador1->SetTank(TankJ1);
+            pPlayer1_tank = new Tank("Leopardo II",150,15);
+            pPlayer1->setTank(pPlayer1_tank);
             break;
         case 4:
-            TankJ1 = new Tanque("Black Night",100,25);
-            TankJ1->SetEspecial(1);
-            gJugador1->SetEspecial(1);
-            gJugador1->SetTank(TankJ1);
+            pPlayer1_tank = new Tank("Black Night",100,25);
+
+            pPlayer1_tank->setSpecial(1);
+            pPlayer1->setSpecial(1);
+            pPlayer1->setTank(pPlayer1_tank);
             break;
+
         default:
-            gImpresion->ImpresionError01();
-            Menu03_2();
+            pPrinter->printError01();
+            getPlayerTank();
     }
 
-    gImpresion->print_player(gJugador2);
-  
-    Menu03_3();
+    pPrinter->printPlayerName(pPlayer2);
+    getPlayerTank02();
 
 }
 
-void Menu03_3() {
-    int TJ2 = VerificarNumero();
-    Tanque *TankJ2 = nullptr;
-    switch (TJ2) {
+void getPlayerTank02() {
+    int player2_tank = verifyInput();
+    Tank* pPlayer2_tank = nullptr;
+    switch (player2_tank) {
         case 1:
-            TankJ2 = new Tanque("T-28 TANKER",100,30);
-            gJugador2->SetTank(TankJ2);
+            pPlayer2_tank = new Tank("T-28 TANKER",100,30);
+            pPlayer2->setTank(pPlayer2_tank);
             break;
         case 2:
-            TankJ2 = new Tanque("T-14 Armata",100,60);
-            gJugador2->SetTank(TankJ2);
+            pPlayer2_tank = new Tank("T-14 Armata",100,60);
+            pPlayer2->setTank(pPlayer2_tank);
             break;
         case 3:
-            TankJ2 = new Tanque("Leopardo II",150,15);
-            gJugador2->SetTank(TankJ2);
+            pPlayer2_tank = new Tank("Leopardo II",150,15);
+            pPlayer2->setTank(pPlayer2_tank);
             break;
         case 4:
-            TankJ2 = new Tanque("Black Night",100,25);
-            TankJ2->SetEspecial(1);
-            gJugador2->SetEspecial(1);
-            gJugador2->SetTank(TankJ2);
+            pPlayer2_tank = new Tank("Black Night",100,25);
+            pPlayer2_tank->setSpecial(1);
+            pPlayer2->setSpecial(1);
+            pPlayer2->setTank(pPlayer2_tank);
             break;
         default:
-            gImpresion->ImpresionError01();
-            Menu03_3();
+            pPrinter->printError01();
+            getPlayerTank02();
     }
-    Menu04();
+    setPlayersPosition();
 }
 
-
-void Menu04(){
+void setPlayersPosition(){
     system("cls");
-    int posicionTank1=0;
-    int posicionTank2=0;
+    srand (time(NULL));
+    int tank1_location=0;
+    int tank2_location=0;
     for (int i=0;i<2;i++) {
-        posicionTank1 = rand() % 100 + 1;
-        posicionTank2 = rand() % 801+200;
+        tank1_location = rand() % 300 + 1;
+        tank2_location = rand() % 900 + 401;
     }
-    gJugador1->GetTank()->SetPosicion(posicionTank1);
-    gJugador2->GetTank()->SetPosicion(posicionTank2);
-    cout<<"Game Started!"<<endl<<endl;
-    Menu04_2();
+    pPlayer1->getTank()->setPosition(tank1_location);
+    pPlayer2->getTank()->setPosition(tank2_location);
+    pPrinter->SetTerrainString(tank1_location, tank2_location);
+    play();
 }
 
-
-void Menu04_2() {
-    gImpresion->ImprimirInformacionTank(gJugador1);
-    gImpresion->ImprimirInformacionTank(gJugador2);
-    Turnos();
+void play() {
+    pPrinter->printPlayerTankInfo(pPlayer1);
+    pPrinter->printPlayerTankInfo(pPlayer2);
+    pPrinter->printStageTerrain();
+    playerTurns();
 }
 
-
-void Turnos() {
-    switch(gTurno) {
+void playerTurns() {
+    switch(pPlayerTurn) {
         case 0:
-            gImpresion->ImprimirTurno(gJugador1);
-            Disparo(gJugador1);
+            pPrinter->printPlayerTurn(pPlayer1);
+            shot(pPlayer1);
             break;
         case 1:
-            gImpresion->ImprimirTurno(gJugador2);
-            Disparo(gJugador2);
+            pPrinter->printPlayerTurn(pPlayer2);
+            shot(pPlayer2);
         default:
             break;
     }
-    Menu04_2();
+    play();
 }
 
-
-void Disparo(Jugador *J){
-    gImpresion->ImprimirParametros();
-    int potencia = VerificarNumero();
-    if (potencia<0 || potencia>100) {
+void shot(Player *J){
+    pPrinter->printShotParameters();
+    int shot_power = verifyInput();
+    if (shot_power<0 || shot_power>100) {
         cout<<endl;
-        gImpresion->ImpresionError01();
-        Disparo(J);
-    }
-    gImpresion->ImprimirParametros02();
-    int angulo = VerificarNumero();
-    if (angulo<30 || angulo>80) {
-        cout<<endl;
-        gImpresion->ImpresionError01();
-        Disparo(J);
+        pPrinter->printError01();
+        shot(J);
     }
 
-    int metros = (pow(potencia,2)*sin(2*angulo*PI/180))/9.8;
-    int posicion = J->GetTank()->GetPosicion();
-    if (posicion<=200) {
-        Tanque *tEnemigo = gJugador2->GetTank();
-        metros+=posicion;
-        gImpresion->ImpresionMetros(metros);
-        int posicion2 = tEnemigo->GetPosicion();
-        int dano = J->GetTank()->GetDano();
-        if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
-            tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->ImpresionImpacto();
-        }
-        else {
-            gImpresion->ImpresionNoImpacto();
-        }
-        if (tEnemigo->GetVida()<=0) {
-            gImpresion->GameOver(J);
-            END();
-        }
-        if (metros>=(posicion2-30) & metros<=(posicion2+30) & J->GetEspecial() == 1) {
-            if (J->GetTank()->GetEspecial() == 1) {
-                J->GetTank()->SetEspecial(0);
-            }
-            else {
-                J->GetTank()->SetEspecial(1);
-            }
-            Menu04_2();
-        }
-        else {
-            gTurno = 1;
-            Menu04_2();
-        }
+    pPrinter->printAngleParameters();
+    int angle = verifyInput();
+    if (angle<30 || angle>80) {
+        cout<<endl;
+        pPrinter->printError01();
+        shot(J);
+    }
+
+    shotAux(shot_power, angle, J);
+}
+
+void shotAux(int shot_power, int angle, Player *J) {
+    int shot_impact_position = (pow(shot_power,2)*sin(2*angle*PI/180))/9.8;
+
+    int tank_position = J->getTank()->getPosition();
+    
+    Tank* enemy_tank = nullptr;
+    if (tank_position<=300) {
+        enemy_tank = pPlayer2->getTank();
+        shot_impact_position+=tank_position;
+        pPlayerTurn = 1;
     }
     else {
-        metros = posicion - metros;
-        Tanque *tEnemigo = gJugador1->GetTank();
-        gImpresion->ImpresionMetros(metros);
-        int posicion2 = tEnemigo->GetPosicion();
-        int dano = J->GetTank()->GetDano();
-        if (metros == posicion2 || metros>=(posicion2-10) & metros<=(posicion2+10)) {
-            tEnemigo->SetVida(tEnemigo->GetVida()-dano);
-            gImpresion->ImpresionImpacto();
+        enemy_tank = pPlayer1->getTank();
+        shot_impact_position = tank_position - shot_impact_position;
+        pPlayerTurn = 0;
+    }
+
+    if (shot_impact_position<0) {shot_impact_position = 0;}
+    if (shot_impact_position>1000) {shot_impact_position = 1000;}
+
+    shotPlayer(enemy_tank, shot_impact_position, J);
+}
+
+void shotPlayer(Tank *enemy_tank, int shot_impact_position, Player *J) {
+    pPrinter->setShotTerrain(shot_impact_position);
+    pPrinter->printShotImpact(shot_impact_position);
+
+    int enemy_tank_position = enemy_tank->getPosition();
+    int dano = J->getTank()->getDamage();
+    if (shot_impact_position == enemy_tank_position || shot_impact_position>=(enemy_tank_position-10) & shot_impact_position<=(enemy_tank_position+10)) {
+        enemy_tank->setLife(enemy_tank->getLife()-dano);
+        pPrinter->printAccurateShotMsg();
+    }
+    else {
+        pPrinter->printMissedShotMsg();
+    }
+    if (enemy_tank->getLife()<=0) {
+        pPrinter->gameOver(J);
+        endGame();
+    }
+    if (shot_impact_position>=(enemy_tank_position-30) & shot_impact_position<=(enemy_tank_position+30) & J->getSpecial() == 1) {
+        if (J->getTank()->getSpecial() == 1) {
+            J->getTank()->setSpecial(0);
         }
         else {
-            gImpresion->ImpresionNoImpacto();
+            J->getTank()->setSpecial(1);
         }
-        if (tEnemigo->GetVida()<=0) {
-            gImpresion->GameOver(J);
-            END();
-        }
-        if (metros>=(posicion2-30) & metros<=(posicion2+30) & J->GetTank()->GetEspecial() == 1) {
-            if (J->GetTank()->GetEspecial() == 1) {
-                J->GetTank()->SetEspecial(0);
-            }
-            else {
-                J->GetTank()->SetEspecial(1);
-            }
-            Menu04_2();
-        }
-        else {
-            gTurno = 0;
-            Menu04_2();
-        }
+        play();
     }
 }
 
-
-
-int VerificarNumero() {
+int verifyInput() {
 	int numero;
 	while (!(cin>>numero)) {
 		cin.clear();
 		cin.ignore(10000,'\n');
-        gImpresion->ImpresionError01();
+        pPrinter->printError01();
 	}
 	return numero;
 }
 
-int END() {
+int endGame() {
     cout<<"\n\n\n";
     system("pause");
     cout<<"\n\n\n";
